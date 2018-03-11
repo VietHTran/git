@@ -70,7 +70,10 @@ matrix:
       after_failure:
 
 before_install: ci/install-dependencies.sh
-script: ci/run-build-and-tests.sh
+install: pip install pylint
+script: 
+    - ci/run-build-and-tests.sh
+    - pylint test.py
 after_failure: ci/print-test-failures.sh
 
 notifications:
