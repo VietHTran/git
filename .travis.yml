@@ -20,7 +20,6 @@ addons:
     - language-pack-is
     - git-svn
     - apache2
-    - python
 
 matrix:
   include:
@@ -65,16 +64,21 @@ matrix:
           packages:
           - asciidoc
           - xmlto
-      before_install:
       script: ci/test-documentation.sh
       after_failure:
+    - env: jobname=Pylint
+      os: linux
+      compiler:
+      addons:
+        apt:
+          packages:
+          - python
+      install: pip install --user pylint
+      script: pylint test.py 
+      after_failure:
 
-before_install: 
-    - ci/install-dependencies.sh
-    - pip install --user pylint
-script: 
-    - ci/run-build-and-tests.sh
-    - pylint test.py
+before_install: ci/install-dependencies.sh
+script: ci/run-build-and-tests.sh
 after_failure: ci/print-test-failures.sh
 
 notifications:
