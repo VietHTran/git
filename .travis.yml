@@ -30,6 +30,7 @@ matrix:
         apt:
           packages:
           - python
+      before_install:
       install: pip install --user pylint
       script: pylint test.py 
       after_failure:
