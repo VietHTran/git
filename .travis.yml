@@ -76,6 +76,7 @@ matrix:
           packages:
           - asciidoc
           - xmlto
+      before_install:
       script: ci/test-documentation.sh
       after_failure:
 
