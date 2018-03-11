@@ -23,6 +23,16 @@ addons:
 
 matrix:
   include:
+    - env: jobname=Pylint
+      os: linux
+      compiler:
+      addons:
+        apt:
+          packages:
+          - python
+      install: pip install --user pylint
+      script: pylint test.py 
+      after_failure:
     - env: jobname=GETTEXT_POISON
       os: linux
       compiler:
@@ -65,16 +75,6 @@ matrix:
           - asciidoc
           - xmlto
       script: ci/test-documentation.sh
-      after_failure:
-    - env: jobname=Pylint
-      os: linux
-      compiler:
-      addons:
-        apt:
-          packages:
-          - python
-      install: pip install --user pylint
-      script: pylint test.py 
       after_failure:
 
 before_install: ci/install-dependencies.sh
