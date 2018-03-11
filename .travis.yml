@@ -24,7 +24,6 @@ addons:
 matrix:
   include:
     - env: jobname=Pylint
-      os: linux
       compiler:
       addons:
         apt:
@@ -58,7 +57,9 @@ matrix:
       before_install:
       script: ci/run-linux32-docker.sh
     - env: jobname=StaticAnalysis
-      os: linux
+      os: 
+          - linux
+          - osx
       compiler:
       addons:
         apt:
