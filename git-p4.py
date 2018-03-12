@@ -229,7 +229,7 @@ def p4_has_command(cmd):
        command does not exist in this version of p4."""
     real_cmd = p4_build_cmd(["help", cmd])
     p = subprocess.Popen(real_cmd, stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE)
+                         stderr=subprocess.PIPE)
     p.communicate()
     return p.returncode == 0
 
@@ -635,7 +635,6 @@ def extractLogMessageFromGitCommit(commit):
             if len(log) == 1:
                 foundTitle = True
             continue
- 
         logMessage += log
     return logMessage
 
@@ -1075,7 +1074,8 @@ class LargeFileSystem(object):
                 if gitConfigBool('git-p4.largeFilePush'):
                     self.pushFile(localLargeFile)
                 if verbose:
-                    sys.stderr.write("%s moved to large file system(%s)\n" % (relPath, localLargeFile))
+                    sys.stderr.write("%s moved to large file system(%s)\n"
+                                     % (relPath, localLargeFile))
         return(git_mode, contents)
 
 class MockLFS(LargeFileSystem):
@@ -1089,7 +1089,8 @@ class MockLFS(LargeFileSystem):
             content = next(f)
             gitMode = '100644'
             pointerContents = 'pointer-' + content
-            localLargeFile = os.path.join(os.getcwd(), '.git', 'mock-storage', 'local', content[:-1])
+            localLargeFile = os.path.join(os.getcwd(), '.git', 'mock-storage', 'local',
+                                          content[:-1])
             return(gitMode, pointerContents, localLargeFile)
 
     def pushFile(self, localLargeFile):
@@ -1161,10 +1162,10 @@ class GitLFS(LargeFileSystem):
                 '#\n',
             ]+
             ['*.' + f.replace(' ', '[[:space:]]') + ' filter=lfs diff=lfs merge=lfs -text\n'
-            for f in sorted(gitConfigList('git-p4.largeFileExtensions'))
+             for f in sorted(gitConfigList('git-p4.largeFileExtensions'))
             ]+
             ['/' + f.replace(' ', '[[:space:]]') + ' filter=lfs diff=lfs merge=lfs -text\n'
-            for f in sorted(self.largeFiles) if not self.hasLargeFileExtension(f)
+             for f in sorted(self.largeFiles) if not self.hasLargeFileExtension(f)
             ]
         )
 
@@ -1382,7 +1383,8 @@ class P4Submit(Command, P4UserMap):
         self.branch = None
 
         if gitConfig('git-p4.largeFileSystem'):
-            die("Large file system not supported for git-p4 submit command. Please remove it from config.")
+            die("Large file system not supported for git-p4 submit command. "
+                "Please remove it from config.")
 
     def check(self):
         if len(p4CmdList("opened ...")) > 0:
@@ -1524,9 +1526,10 @@ class P4Submit(Command, P4UserMap):
         for r in result:
             if r.has_key('code'):
                 if r['code'] == 'error':
-                    die("Could not modify user field of changelist %s to %s:%s" %(changelist, newUser, r['data']))
+                    die("Could not modify user field of changelist %s to %s:%s"
+                        % (changelist, newUser, r['data']))
             if r.has_key('data'):
-                print "Updated user field for changelist %s to %s" %(changelist, newUser) 
+                print "Updated user field for changelist %s to %s" %(changelist, newUser)
                 return
         die("Could not modify user field of changelist %s to %s" %(changelist, newUser))
 
@@ -1787,7 +1790,8 @@ class P4Submit(Command, P4UserMap):
                         for line in read_pipe_lines(["git", "diff", "%s^..%s" %(id, id), file]):
                             if regexp.search(line):
                                 if verbose:
-                                    print "got keyword match on %s in %s in %s" %(pattern, line, file)
+                                    print "got keyword match on %s in %s in %s"
+                                          %(pattern, line, file)
                                 kwfiles[file] = pattern
                                 break
 
@@ -2116,7 +2120,8 @@ class P4Submit(Command, P4UserMap):
         else:
             commitish = 'HEAD'
 
-        for line in read_pipe_lines(["git", "rev-list", "--no-merges", "%s..%s" %(self.origin, commitish)]):
+        for line in read_pipe_lines(["git", "rev-list", "--no-merges", "%s..%s"
+                                     % (self.origin, commitish)]):
             commits.append(line.strip())
         commits.reverse()
 
@@ -2617,7 +2622,8 @@ class P4Sync(Command, P4UserMap):
             # just the native "NT" type.
             #
             try:
-                text = p4_read_pipe(['print', '-q', '-o', '-', '%s@%s' %(file['depotFile'], file['change'])])
+                text = p4_read_pipe(['print', '-q', '-o', '-', '%s@%s'
+                                     % (file['depotFile'], file['change'])])
             except Exception as e:
                 if 'Translation of file content failed' in str(e):
                     type_base = 'binary'
@@ -2725,7 +2731,8 @@ class P4Sync(Command, P4UserMap):
             size = int(self.stream_file["fileSize"])
             if size > 0:
                 progress = 100*self.stream_file['streamContentSize']/size
-                sys.stdout.write('\r%s %d%%(%i MB)' %(self.stream_file['depotFile'], progress, int(size/1024/1024)))
+                sys.stdout.write('\r%s %d%%(%i MB)' %(self.stream_file['depotFile'], progress,
+                                                      int(size/1024/1024)))
                 sys.stdout.flush()
 
         self.stream_have_file_info = True
@@ -2892,7 +2899,8 @@ class P4Sync(Command, P4UserMap):
                     cleanedFiles[info["depotFile"]] = info["rev"]
 
                 if cleanedFiles == labelRevisions:
-                    self.streamTag(self.gitStream, 'tag_%s' % labelDetails['label'], labelDetails, branch, epoch)
+                    self.streamTag(self.gitStream, 'tag_%s' % labelDetails['label'],
+                                   labelDetails, branch, epoch)
 
                 else:
                     if not self.silent:
@@ -2925,7 +2933,6 @@ class P4Sync(Command, P4UserMap):
                 change = int(file["change"])
                 if change > newestChange:
                     newestChange = change
-
             self.labels[newestChange] = [output, revisions]
 
         if self.verbose:
@@ -2960,7 +2967,7 @@ class P4Sync(Command, P4UserMap):
 
             # get the most recent changelist for each file in this label
             change = p4Cmd(["changes", "-m", "1"] + ["%s...@%s" %(p, name)
-                                for p in self.depotPaths])
+                                                     for p in self.depotPaths])
 
             if change.has_key('change'):
                 # find the corresponding git commit; take the oldest commit
@@ -2970,9 +2977,11 @@ class P4Sync(Command, P4UserMap):
                     commitFound = True
                 else:
                     gitCommit = read_pipe(["git", "rev-list", "--max-count=1",
-                                           "--reverse", ":/\[git-p4:.*change = %d\]" % changelist], ignore_error=True)
+                                           "--reverse", ":/\[git-p4:.*change = %d\]"
+                                           % changelist], ignore_error=True)
                     if len(gitCommit) == 0:
-                        print "importing label %s: could not find git commit for changelist %d" %(name, changelist)
+                        print "importing label %s: could not find git commit for changelist %d"
+                              % (name, changelist)
                     else:
                         commitFound = True
                         gitCommit = gitCommit.strip()
@@ -3025,19 +3034,23 @@ class P4Sync(Command, P4UserMap):
                 paths = details["View%s" % viewIdx].split(" ")
                 viewIdx = viewIdx + 1
                 # require standard //depot/foo/... //depot/bar/... mapping
-                if len(paths) != 2 or not paths[0].endswith("/...") or not paths[1].endswith("/..."):
+                if len(paths) != 2 or not paths[0].endswith("/...") or
+                   not paths[1].endswith("/..."):
                     continue
                 source = paths[0]
                 destination = paths[1]
                 ## HACK
-                if p4PathStartsWith(source, self.depotPaths[0]) and p4PathStartsWith(destination, self.depotPaths[0]):
+                if p4PathStartsWith(source, self.depotPaths[0]) and
+                   p4PathStartsWith(destination, self.depotPaths[0]):
                     source = source[len(self.depotPaths[0]):-4]
                     destination = destination[len(self.depotPaths[0]):-4]
 
                     if destination in self.knownBranches:
                         if not self.silent:
-                            print "p4 branch %s defines a mapping from %s to %s" %(info["branch"], source, destination)
-                            print "but there exists another mapping from %s to %s already!" %(self.knownBranches[destination], destination)
+                            print "p4 branch %s defines a mapping from %s to %s"
+                                  %(info["branch"], source, destination)
+                            print "but there exists another mapping from %s to %s already!"
+                                  %(self.knownBranches[destination], destination)
                         continue
 
                     self.knownBranches[destination] = source
@@ -3135,8 +3148,8 @@ class P4Sync(Command, P4UserMap):
     def importNewBranch(self, branch, maxChange):
         # make fast-import flush all changes to disk and update the refs using the checkpoint
         # command so that we can try to find the branch parent in the git history
-        self.gitStream.write("checkpoint\n\n");
-        self.gitStream.flush();
+        self.gitStream.write("checkpoint\n\n")
+        self.gitStream.flush()
         branchPrefix = self.depotPaths[0] + branch + "/"
         range = "@1, %s" % maxChange
         #print "prefix" + branchPrefix
@@ -3150,7 +3163,8 @@ class P4Sync(Command, P4UserMap):
         sourceRef = self.gitRefForBranch(sourceBranch)
         #print "source " + sourceBranch
 
-        branchParentChange = int(p4Cmd(["changes", "-m", "1", "%s...@1, %s" %(sourceDepotPath, firstChange)])["change"])
+        branchParentChange = int(p4Cmd(["changes", "-m", "1", "%s...@1, %s"
+                                        %(sourceDepotPath, firstChange)])["change"])
         #print "branch parent: %s" % branchParentChange
         gitParent = self.gitCommitByP4Change(sourceRef, branchParentChange)
         if len(gitParent) > 0:
@@ -3182,7 +3196,8 @@ class P4Sync(Command, P4UserMap):
             self.updateOptionDict(description)
 
             if not self.silent:
-                sys.stdout.write("\rImporting revision %s(%s%%)" %(change, cnt * 100 / len(changes)))
+                sys.stdout.write("\rImporting revision %s(%s%%)"
+                                 % (change, cnt * 100 / len(changes)))
                 sys.stdout.flush()
             cnt = cnt + 1
 
@@ -3212,12 +3227,12 @@ class P4Sync(Command, P4UserMap):
                                 fullBranch = self.projectName + branch
                                 if fullBranch not in self.p4BranchesInGit:
                                     if not self.silent:
-                                        print("\n    Importing new branch %s" % fullBranch);
+                                        print("\n    Importing new branch %s" % fullBranch)
                                     if self.importNewBranch(branch, change - 1):
                                         parent = ""
                                         self.p4BranchesInGit.append(fullBranch)
                                     if not self.silent:
-                                        print("\n    Resuming with change %s" % change);
+                                        print("\n    Resuming with change %s" % change)
 
                                 if self.verbose:
                                     print "parent determined through known branches: %s" % parent
@@ -3226,7 +3241,8 @@ class P4Sync(Command, P4UserMap):
                         parent = self.gitRefForBranch(parent)
 
                         if self.verbose:
-                            print "looking for initial parent for %s; current parent is %s" %(branch, parent)
+                            print "looking for initial parent for %s; current parent is %s"
+                                  % (branch, parent)
 
                         if len(parent) == 0 and branch in self.initialParents:
                             parent = self.initialParents[branch]
@@ -3263,7 +3279,7 @@ class P4Sync(Command, P4UserMap):
         details = {}
         details["user"] = "git perforce import user"
         details["desc"] = ("Initial import of %s from the state at revision %s\n"
-                          %(' '.join(self.depotPaths), revision))
+                           %(' '.join(self.depotPaths), revision))
         details["change"] = revision
         newestRevision = 0
 
@@ -3540,7 +3556,8 @@ class P4Sync(Command, P4UserMap):
                 # does not have any existing p4 branches
                 if len(args) == 0:
                     if not self.p4BranchesInGit:
-                        die("No remote p4 branches.  Perhaps you never did \"git p4 clone\" in here.")
+                        die("No remote p4 branches.  "
+                            "Perhaps you never did \"git p4 clone\" in here.")
 
                     # The default branch is master, unless --branch is used to
                     # specify something else.  Make sure it exists, or complain
@@ -3556,7 +3573,8 @@ class P4Sync(Command, P4UserMap):
                 if self.verbose:
                     print "Getting p4 changes for %s...%s" %(', '.join(self.depotPaths),
                                                              self.changeRange)
-                changes = p4ChangesForPaths(self.depotPaths, self.changeRange, self.changes_block_size)
+                changes = p4ChangesForPaths(self.depotPaths, self.changeRange, 
+                                            self.changes_block_size)
 
                 if len(self.maxChanges) > 0:
                     changes = changes[:min(int(self.maxChanges), len(changes))]
@@ -3627,7 +3645,7 @@ class P4Rebase(Command):
         ]
         self.importLabels = False
         self.description = ("Fetches the latest revision from perforce and "
-                           + "rebases the current work(branch) against it")
+                            + "rebases the current work(branch) against it")
 
     def run(self, args):
         sync = P4Sync()
@@ -3638,9 +3656,12 @@ class P4Rebase(Command):
 
     def rebase(self):
         if os.system("git update-index --refresh") != 0:
-            die("Some files in your working directory are modified and different than what is in your index. You can use git update-index <filename> to bring the index up to date or stash away all your changes with git stash.");
+            die("Some files in your working directory are modified and different than what is in "
+                "your index. You can use git update-index <filename> to bring the index up to "
+                "date or stash away all your changes with git stash.")
         if len(read_pipe("git diff-index HEAD --")) > 0:
-            die("You have uncommitted changes. Please commit them before rebasing or stash them away with git stash.")
+            die("You have uncommitted changes. "
+                "Please commit them before rebasing or stash them away with git stash.")
 
         [upstream, settings] = findUpstreamBranchPoint()
         if len(upstream) == 0:
@@ -3666,7 +3687,7 @@ class P4Clone(P4Sync):
                                  help="where to leave result of the clone"),
             optparse.make_option("--bare", dest="cloneBare",
                                  action="store_true", default=False),
-       ]
+        ]
         self.cloneDestination = None
         self.needsGit = False
         self.cloneBare = False
@@ -3739,7 +3760,7 @@ class P4Branches(Command):
         Command.__init__(self)
         self.options = []
         self.description = ("Shows the git branches that hold imports and their "
-                           + "corresponding perforce depot paths")
+                            + "corresponding perforce depot paths")
         self.verbose = False
 
     def run(self, args):
