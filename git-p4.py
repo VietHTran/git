@@ -1790,8 +1790,8 @@ class P4Submit(Command, P4UserMap):
                         for line in read_pipe_lines(["git", "diff", "%s^..%s" %(id, id), file]):
                             if regexp.search(line):
                                 if verbose:
-                                    print "got keyword match on %s in %s in %s"
-                                           %(pattern, line, file)
+                                    print "got keyword match on %s in %s in %s" \
+                                          %(pattern, line, file)
                                 kwfiles[file] = pattern
                                 break
 
@@ -2980,7 +2980,7 @@ class P4Sync(Command, P4UserMap):
                                            "--reverse", ":/\[git-p4:.*change = %d\]"
                                            % changelist], ignore_error=True)
                     if len(gitCommit) == 0:
-                        print "importing label %s: could not find git commit for changelist %d"
+                        print "importing label %s: could not find git commit for changelist %d" \
                               % (name, changelist)
                     else:
                         commitFound = True
@@ -3034,22 +3034,22 @@ class P4Sync(Command, P4UserMap):
                 paths = details["View%s" % viewIdx].split(" ")
                 viewIdx = viewIdx + 1
                 # require standard //depot/foo/... //depot/bar/... mapping
-                if len(paths) != 2 or not paths[0].endswith("/...") or
+                if len(paths) != 2 or not paths[0].endswith("/...") or \
                    not paths[1].endswith("/..."):
                     continue
                 source = paths[0]
                 destination = paths[1]
                 ## HACK
-                if p4PathStartsWith(source, self.depotPaths[0]) and
+                if p4PathStartsWith(source, self.depotPaths[0]) and \
                    p4PathStartsWith(destination, self.depotPaths[0]):
                     source = source[len(self.depotPaths[0]):-4]
                     destination = destination[len(self.depotPaths[0]):-4]
 
                     if destination in self.knownBranches:
                         if not self.silent:
-                            print "p4 branch %s defines a mapping from %s to %s"
+                            print "p4 branch %s defines a mapping from %s to %s" \
                                   %(info["branch"], source, destination)
-                            print "but there exists another mapping from %s to %s already!"
+                            print "but there exists another mapping from %s to %s already!" \
                                   %(self.knownBranches[destination], destination)
                         continue
 
@@ -3241,7 +3241,7 @@ class P4Sync(Command, P4UserMap):
                         parent = self.gitRefForBranch(parent)
 
                         if self.verbose:
-                            print "looking for initial parent for %s; current parent is %s"
+                            print "looking for initial parent for %s; current parent is %s" \
                                   % (branch, parent)
 
                         if len(parent) == 0 and branch in self.initialParents:
