@@ -1791,7 +1791,7 @@ class P4Submit(Command, P4UserMap):
                             if regexp.search(line):
                                 if verbose:
                                     print "got keyword match on %s in %s in %s"
-                                          %(pattern, line, file)
+                                           %(pattern, line, file)
                                 kwfiles[file] = pattern
                                 break
 
