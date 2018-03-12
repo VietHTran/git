@@ -31,7 +31,7 @@ matrix:
           - python
       before_install:
       install: pip install --user pylint
-      script: pylint test.py 
+      script: pylint git-p4.py 
       after_failure:
     - env: jobname=GETTEXT_POISON
       os: linux
