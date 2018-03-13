@@ -2556,6 +2556,7 @@ class P4Sync(Command, P4UserMap):
             print "checkpoint finished: " + out
 
     def extractFilesFromCommit(self, commit):
+        """..."""
         self.cloneExclude = [re.sub(r"\.\.\.$", "", path)
                              for path in self.cloneExclude]
         files = []
@@ -2873,6 +2874,7 @@ class P4Sync(Command, P4UserMap):
 
             # curry self argument
             def streamP4FilesCbSelf(entry):
+                """..."""
                 self.streamP4FilesCb(entry)
 
             fileArgs = ['%s#%s' %(f['path'], f['rev']) for f in filesToRead]
@@ -3949,6 +3951,7 @@ commands = {
 
 
 def main():
+    """..."""
     if len(sys.argv[1:]) == 0:
         printUsage(commands.keys())
         sys.exit(2)
