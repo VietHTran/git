@@ -49,7 +49,7 @@ VERBOSE = False
 DEFAULT_LABEL_REGEXP = r'[a-zA-Z0-9_\-.]+$'
 
 # Grab changes in blocks of this many revisions, unless otherwise requested
-defaultBlockSize = 512
+DEFAULT_BLOCK_SIZE = 512
 
 def p4_build_cmd(cmd):
     """Build a suitable p4 command line.
@@ -734,48 +734,48 @@ def gitBranchExists(branch):
                             stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     return proc.wait() == 0
 
-_gitConfig = {}
+GIT_CONFIG = {}
 
 def gitConfig(key, typeSpecifier=None):
     """..."""
-    if not _gitConfig.has_key(key):
+    if not GIT_CONFIG.has_key(key):
         cmd = ["git", "config"]
         if typeSpecifier:
             cmd += [typeSpecifier]
         cmd += [key]
         s = read_pipe(cmd, ignore_error=True)
-        _gitConfig[key] = s.strip()
-    return _gitConfig[key]
+        GIT_CONFIG[key] = s.strip()
+    return GIT_CONFIG[key]
 
 def gitConfigBool(key):
     """Return a bool, using git config --bool.  It is True only if the
        variable is set to true, and False if set to false or not present
        in the config."""
 
-    if not _gitConfig.has_key(key):
-        _gitConfig[key] = gitConfig(key, '--bool') == "true"
-    return _gitConfig[key]
+    if not GIT_CONFIG.has_key(key):
+        GIT_CONFIG[key] = gitConfig(key, '--bool') == "true"
+    return GIT_CONFIG[key]
 
 def gitConfigInt(key):
     """..."""
-    if not _gitConfig.has_key(key):
+    if not GIT_CONFIG.has_key(key):
         cmd = ["git", "config", "--int", key]
         s = read_pipe(cmd, ignore_error=True)
         v = s.strip()
         try:
-            _gitConfig[key] = int(gitConfig(key, '--int'))
+            GIT_CONFIG[key] = int(gitConfig(key, '--int'))
         except ValueError:
-            _gitConfig[key] = None
-    return _gitConfig[key]
+            GIT_CONFIG[key] = None
+    return GIT_CONFIG[key]
 
 def gitConfigList(key):
     """..."""
-    if not _gitConfig.has_key(key):
+    if not GIT_CONFIG.has_key(key):
         s = read_pipe(["git", "config", "--get-all", key], ignore_error=True)
-        _gitConfig[key] = s.strip().splitlines()
-        if _gitConfig[key] == ['']:
-            _gitConfig[key] = []
-    return _gitConfig[key]
+        GIT_CONFIG[key] = s.strip().splitlines()
+        if GIT_CONFIG[key] == ['']:
+            GIT_CONFIG[key] = []
+    return GIT_CONFIG[key]
 
 def p4BranchesInGit(branchesAreInRemotes=True):
     """Find all the branches whose names start with "p4/", looking
@@ -917,7 +917,7 @@ def chooseBlockSize(blockSize):
     if blockSize:
         return blockSize
     else:
-        return defaultBlockSize
+        return DEFAULT_BLOCK_SIZE
 
 def p4ChangesForPaths(depotPaths, changeRange, requestedBlockSize):
     """..."""
@@ -3938,7 +3938,7 @@ def printUsage(commands):
     print "Try %s <command> --help for command specific help." % sys.argv[0]
     print ""
 
-commands = {
+COMMANDS = {
     "debug" : P4Debug,
     "submit" : P4Submit,
     "commit" : P4Submit,
@@ -3953,17 +3953,17 @@ commands = {
 def main():
     """..."""
     if len(sys.argv[1:]) == 0:
-        printUsage(commands.keys())
+        printUsage(COMMANDS.keys())
         sys.exit(2)
 
     cmdName = sys.argv[1]
     try:
-        klass = commands[cmdName]
+        klass = COMMANDS[cmdName]
         cmd = klass()
     except KeyError:
         print "unknown command %s" % cmdName
         print ""
-        printUsage(commands.keys())
+        printUsage(COMMANDS.keys())
         sys.exit(2)
 
     options = cmd.options
