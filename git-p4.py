@@ -37,7 +37,7 @@ except ImportError:
         """This exception is raised when a process run by check_call() returns
         a non-zero exit status.  The exit status will be stored in the
         returncode attribute."""
-        def__init__(self, returncode, cmd):
+        def __init__(self, returncode, cmd):
             self.returncode = returncode
             self.cmd = cmd
         def __str__(self):
