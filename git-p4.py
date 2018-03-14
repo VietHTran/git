@@ -3143,11 +3143,13 @@ class P4Sync(Command, P4UserMap):
 
     def searchParent(self, parent, branch, target):
         parentFound = False
+        blob = None
         for blob in read_pipe_lines(["git", "rev-list", "--reverse",
                                      "--no-merges", parent]):
             blob = blob.strip()
             if len(read_pipe(["git", "diff-tree", blob, target])) == 0:
                 parentFound = True
+                parentBlob = blob
                 if self.verbose:
                     print "Found parent of %s in commit %s" % (branch, blob)
                 break
@@ -3382,6 +3384,7 @@ class P4Sync(Command, P4UserMap):
                         for (prev, cur) in zip(self.previousDepotPaths, depotPaths):
                             prev_list = prev.split("/")
                             cur_list = cur.split("/")
+                            i = 0
                             for i in range(0, min(len(cur_list), len(prev_list))):
                                 if cur_list[i] <> prev_list[i]:
                                     i = i - 1
