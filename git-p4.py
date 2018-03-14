@@ -23,9 +23,7 @@ import re
 import shutil
 import stat
 import zipfile
-import zlib
 import ctypes
-import errno
 
 try:
     from subprocess import CalledProcessError
