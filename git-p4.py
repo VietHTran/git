@@ -96,8 +96,7 @@ def p4_build_cmd(cmd):
 
 def git_dir(path):
     """ Return TRUE if the given path is a git directory(/path/to/dir/.git).
-        This won't automatically add ".git" to a directory.
-    """
+        This won't automatically add ".git" to a directory."""
     pipe = read_pipe(["git", "--git-dir", path, "rev-parse", "--git-dir"], True).strip()
     if not pipe:
         return None
