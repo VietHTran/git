@@ -188,7 +188,7 @@ def read_pipe_text(c):
     """ Read output from a command with trailing whitespace stripped.
         On error, returns None.
     """
-    (retcode, out, err) = read_pipe_full(c)
+    (retcode, out, unused_err) = read_pipe_full(c)
     if retcode != 0:
         return None
     else:
@@ -235,7 +235,7 @@ def p4_has_move_command():
         return False
     cmd = p4_build_cmd(["move", "-k", "@from", "@to"])
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = p.communicate()
+    (unused_out, err) = p.communicate()
     # return code will be 1 in either case
     if err.find("Invalid option") >= 0:
         return False
@@ -685,7 +685,6 @@ def gitConfigInt(key):
     if not _gitConfig.has_key(key):
         cmd = [ "git", "config", "--int", key ]
         s = read_pipe(cmd, ignore_error=True)
-        v = s.strip()
         try:
             _gitConfig[key] = int(gitConfig(key, '--int'))
         except ValueError:
@@ -1536,7 +1535,7 @@ class P4Submit(Command, P4UserMap):
            Remove lines in the Files section that show changes to files
            outside the depot path we're committing into."""
 
-        [upstream, settings] = findUpstreamBranchPoint()
+        [unused_upstream, settings] = findUpstreamBranchPoint()
 
         template = """\
 # A Perforce Change Specification.
@@ -1555,7 +1554,6 @@ class P4Submit(Command, P4UserMap):
 #               (New changelists only.)
 """
         files_list = []
-        inFilesSection = False
         change_entry = None
         args = ['change', '-o']
         if changelist:
@@ -2279,13 +2277,11 @@ class View(object):
                 die("No first-word closing quote found: %s" % view_line)
             depot_side = view_line[1:close_quote_index]
             # skip closing quote and space
-            rhs_index = close_quote_index + 1 + 1
         else:
             space_index = view_line.find(" ")
             if space_index <= 0:
                 die("No word-splitting space found: %s" % view_line)
             depot_side = view_line[0:space_index]
-            rhs_index = space_index + 1
 
         # prefix + means overlay on previous mapping
         if depot_side.startswith("+"):
@@ -3627,7 +3623,7 @@ class P4Rebase(Command):
         if len(read_pipe("git diff-index HEAD --")) > 0:
             die("You have uncommitted changes. Please commit them before rebasing or stash them away with git stash.");
 
-        [upstream, settings] = findUpstreamBranchPoint()
+        [upstream, unused_settings] = findUpstreamBranchPoint()
         if len(upstream) == 0:
             die("Cannot find upstream branchpoint for rebase")
 
